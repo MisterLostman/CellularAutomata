@@ -7,17 +7,22 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="600"        
         WindowStartupLocation="Manual"
-        Left="0" Top="0">
+        Left="0" Top="0"
+        x:Name="mainWindow">
+
+    <Window.Resources>
+        <local:Configuration x:Key="config" />
+    </Window.Resources>
     
     <Grid>
         <Grid.Resources>            
             <DataTemplate x:Key="cellTemplate" DataType="{x:Type local:Cell}">
-                <Border x:Name="cellBorder" BorderBrush="LightBlue" BorderThickness="1" Height="Auto">
+                <Border x:Name="cellBorder" BorderBrush="LightBlue" BorderThickness="1" Height="Auto" Opacity="{Binding Source={StaticResource config}, Path=BorderOpacity}">
                     <Button x:Name="aliveToggle" Background="Black" Opacity="0" Click="OnClick" />
                 </Border>
 
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding Path=IsAlive}" Value="True">
+                    <DataTrigger Binding="{Binding IsAlive}" Value="True">
                         <Setter TargetName="aliveToggle" Property="Opacity" Value="1" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
@@ -41,7 +46,8 @@
         <StackPanel x:Name="configPanel" Grid.Row="1" Orientation="Horizontal">
             <Button Click="CreateBoard">Create Board</Button>
             <Button Click="UpdateClick">Update</Button>
-            <Button Click="ClearClick">Clear</Button>            
+            <Button Click="ClearClick">Clear</Button>
+            <Button Click="BorderToggle">Show/Hide Borders</Button>
         </StackPanel>
     </Grid>
 </Window>

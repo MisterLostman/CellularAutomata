@@ -12,9 +12,14 @@ namespace Conway
         public ObservableCollection<Cell> cellBoard { get; set; }        
         public Dictionary<Cell, List<Cell>> neighborDict;
 
-        public int Rows { get; set; }
-        public int Columns { get; set; }
+        public int Rows { get; set; } = 50;
+        public int Columns { get; set; } = 50;
           
+        
+        public void CreateNewBoard()
+        {
+            CreateNewBoard(Rows, Columns);
+        }
           
         public void CreateNewBoard(int rows, int columns)
         {

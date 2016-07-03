@@ -22,7 +22,7 @@ namespace Conway
     /// </summary>
     public partial class MainWindow : Window
     {
-        Board board = new Board();
+        Board board = new Board();        
 
         public MainWindow()
         {
@@ -46,7 +46,7 @@ namespace Conway
 
         private void CreateBoard(object sender, RoutedEventArgs e)
         {
-            board.CreateNewBoard(50,50);
+            board.CreateNewBoard();
             conwayGrid.ItemsSource = board.cellBoard;       
         }
 
@@ -65,6 +65,17 @@ namespace Conway
         {
             foreach (Cell cell in board.cellBoard)
                 cell.IsAlive = false;
+        }
+
+        private void BorderToggle(object sender, RoutedEventArgs e)
+        {
+            var config = (Configuration)mainWindow.FindResource("config");
+            if (config.BorderOpacity == 1)
+                config.BorderOpacity = 0;
+            else
+                config.BorderOpacity = 1;
+
+            Debug.WriteLine(config.BorderOpacity);
         }
     }
 }
