@@ -1,0 +1,47 @@
+﻿<Window x:Class="Conway.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Conway"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="600"        
+        WindowStartupLocation="Manual"
+        Left="0" Top="0">
+    
+    <Grid>
+        <Grid.Resources>            
+            <DataTemplate x:Key="cellTemplate" DataType="{x:Type local:Cell}">
+                <Border x:Name="cellBorder" BorderBrush="LightBlue" BorderThickness="1" Height="Auto">
+                    <Button x:Name="aliveToggle" Background="Black" Opacity="0" Click="OnClick" />
+                </Border>
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Path=IsAlive}" Value="True">
+                        <Setter TargetName="aliveToggle" Property="Opacity" Value="1" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" 
+                      DataContext="board" Height="600" VerticalAlignment="Top">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="50" Columns="50"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>            
+        </ItemsControl>
+
+        <StackPanel x:Name="configPanel" Grid.Row="1" Orientation="Horizontal">
+            <Button Click="CreateBoard">Create Board</Button>
+            <Button Click="UpdateClick">Update</Button>
+            <Button Click="ClearClick">Clear</Button>            
+        </StackPanel>
+    </Grid>
+</Window>
