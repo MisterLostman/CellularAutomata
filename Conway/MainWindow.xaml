@@ -17,7 +17,10 @@
     <Grid>
         <Grid.Resources>            
             <DataTemplate x:Key="cellTemplate" DataType="{x:Type local:Cell}">
-                <Border x:Name="cellBorder" BorderBrush="#FF596366" BorderThickness="1" Height="Auto" Opacity="{Binding Source={StaticResource config}, Path=BorderOpacity}">
+                <Border x:Name="cellBorder" BorderThickness="1" Height="Auto" >
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="#FF596366" Opacity="{Binding Source={StaticResource config}, Path=BorderOpacity}"/>
+                    </Border.BorderBrush>
                     <Button x:Name="aliveToggle" Background="Black" Opacity="0" Click="OnClick" />
                 </Border>
 
@@ -38,7 +41,8 @@
                       DataContext="board" Height="600" VerticalAlignment="Top">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Rows="50" Columns="50"/>
+                    <!--have to rebind rows/columns-->
+                    <UniformGrid Rows="80" Columns="80"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>            
         </ItemsControl>

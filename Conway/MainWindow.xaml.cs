@@ -22,12 +22,13 @@ namespace Conway
     /// </summary>
     public partial class MainWindow : Window
     {
-        Board board = new Board();
+        Board board;
         System.Windows.Threading.DispatcherTimer timer;
 
         public MainWindow()
         {
-            InitializeComponent();                               
+            InitializeComponent();
+            board = new Board();                             
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
@@ -47,7 +48,7 @@ namespace Conway
 
         private void CreateBoard(object sender, RoutedEventArgs e)
         {
-            board.CreateNewBoard();
+            board.CreateNewBoard(80,80);
             conwayGrid.ItemsSource = board.cellBoard;       
         }
 

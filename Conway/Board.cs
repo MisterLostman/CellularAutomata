@@ -9,6 +9,8 @@ namespace Conway
 {
     public class Board
     {
+        private bool borderWrap;
+
         public ObservableCollection<Cell> cellBoard { get; set; }        
         public Dictionary<Cell, List<Cell>> neighborDict;
 
@@ -96,12 +98,39 @@ namespace Conway
             for (int i = 0; i < Rows*Columns; i++)
             {
                 Cell cell = cellBoard[i];
-                neighborDict[cell] = GetNeighbors(i);
+                if (borderWrap == true)
+                    neighborDict[cell] = GetNeighborsWrapping(i);
+                else
+                    neighborDict[cell] = GetNeighborsNoWrapping(i);
             }
         }
 
+        private List<Cell> GetNeighborsNoWrapping(int index)
+        {
+            var neighborList = new List<Cell>();
+
+            int row = index / Columns;
+            int col = index % Columns;
+
+            for (int rowDisp = -1; rowDisp <= 1; rowDisp++)
+            {
+                for (int colDisp = -1; colDisp <= 1; colDisp++)
+                {
+                    if (rowDisp != 0 || colDisp != 0)
+                    {
+                        int adjRow = row + rowDisp;
+                        int adjCol = col + colDisp;
+
+                        if (adjRow >= 0 && adjRow < Rows && adjCol >= 0 && adjCol < Columns)
+                            neighborList.Add(cellBoard[RowColToIndex(adjRow, adjCol)]);
+                    }
+                }
+            }
+
+            return neighborList;
+        }
         
-        private List<Cell> GetNeighbors(int index)
+        private List<Cell> GetNeighborsWrapping(int index)
         {
             List<Cell> neighborList = new List<Cell>();
 
