@@ -63,6 +63,11 @@ namespace Conway
             }            
         }
 
+        public void Update(object source, System.Timers.ElapsedEventArgs e)
+        {
+            this.Update();
+        }
+
         public byte AliveCount(Cell cell)
         {
             byte aliveCount = 0;

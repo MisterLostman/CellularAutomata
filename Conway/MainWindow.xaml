@@ -17,7 +17,7 @@
     <Grid>
         <Grid.Resources>            
             <DataTemplate x:Key="cellTemplate" DataType="{x:Type local:Cell}">
-                <Border x:Name="cellBorder" BorderBrush="LightBlue" BorderThickness="1" Height="Auto" Opacity="{Binding Source={StaticResource config}, Path=BorderOpacity}">
+                <Border x:Name="cellBorder" BorderBrush="#FF596366" BorderThickness="1" Height="Auto" Opacity="{Binding Source={StaticResource config}, Path=BorderOpacity}">
                     <Button x:Name="aliveToggle" Background="Black" Opacity="0" Click="OnClick" />
                 </Border>
 
@@ -46,6 +46,8 @@
         <StackPanel x:Name="configPanel" Grid.Row="1" Orientation="Horizontal">
             <Button Click="CreateBoard">Create Board</Button>
             <Button Click="UpdateClick">Update</Button>
+            <Button Click="RunSimulation">Run</Button>
+            <Button Click="StopSimulation">Stop</Button>
             <Button Click="ClearClick">Clear</Button>
             <Button Click="BorderToggle">Show/Hide Borders</Button>
         </StackPanel>

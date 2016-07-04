@@ -22,7 +22,8 @@ namespace Conway
     /// </summary>
     public partial class MainWindow : Window
     {
-        Board board = new Board();        
+        Board board = new Board();
+        System.Windows.Threading.DispatcherTimer timer;
 
         public MainWindow()
         {
@@ -76,6 +77,24 @@ namespace Conway
                 config.BorderOpacity = 1;
 
             Debug.WriteLine(config.BorderOpacity);
+        }
+
+        private void RunSimulation(object source, RoutedEventArgs e)
+        {
+            timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Tick += Update;
+            timer.Start();
+        }
+
+        private void StopSimulation(object source, RoutedEventArgs e)
+        {
+            timer.Stop();
+        }
+
+        private void Update(object sender, EventArgs e)
+        {
+            board.Update();
         }
     }
 }
