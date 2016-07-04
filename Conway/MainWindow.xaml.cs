@@ -48,7 +48,7 @@ namespace Conway
 
         private void CreateBoard(object sender, RoutedEventArgs e)
         {
-            board.CreateNewBoard(80,80);
+            board.CreateNewBoard(50,50);
             conwayGrid.ItemsSource = board.cellBoard;       
         }
 

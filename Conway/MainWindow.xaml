@@ -42,7 +42,7 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!--have to rebind rows/columns-->
-                    <UniformGrid Rows="80" Columns="80"/>
+                    <UniformGrid Rows="{Binding Rows}" Columns="{Binding Columns}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>            
         </ItemsControl>

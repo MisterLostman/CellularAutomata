@@ -1,21 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Conway
 {
-    public class Board
+    public class Board : INotifyPropertyChanged
     {
-        private bool borderWrap;
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string name = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }        
 
         public ObservableCollection<Cell> cellBoard { get; set; }        
         public Dictionary<Cell, List<Cell>> neighborDict;
 
-        public int Rows { get; set; } = 50;
-        public int Columns { get; set; } = 50;
+        private int rows = 50;
+        public int Rows
+        {
+            get { return rows; }
+            set
+            {
+                rows = value;
+                OnPropertyChanged();
+            }
+        }
+            
+        private int columns = 50;
+        public int Columns
+        {
+            get { return columns; }
+            set
+            {
+                columns = value;
+                OnPropertyChanged();
+            }
+        }
           
         
         public void CreateNewBoard()
@@ -23,14 +48,14 @@ namespace Conway
             CreateNewBoard(Rows, Columns);
         }
           
-        public void CreateNewBoard(int rows, int columns)
+        public void CreateNewBoard(int _rows, int _columns)
         {
-            Rows = rows;
-            Columns = columns;
+            Rows = _rows;
+            Columns = _columns;
 
             cellBoard = new ObservableCollection<Cell>();
 
-            for (int i = 0; i < rows * columns; i++)
+            for (int i = 0; i < Rows * Columns; i++)
             {
                 cellBoard.Add(new Cell(false));
             }
@@ -80,15 +105,7 @@ namespace Conway
             }
 
             return aliveCount;
-        }
-
-        public void UpdateTest()
-        {
-            foreach(Cell cell in cellBoard)
-            {
-                cell.Flip();
-            }
-        }
+        }        
 
         #region DictionaryInitialization
 
@@ -98,14 +115,11 @@ namespace Conway
             for (int i = 0; i < Rows*Columns; i++)
             {
                 Cell cell = cellBoard[i];
-                if (borderWrap == true)
-                    neighborDict[cell] = GetNeighborsWrapping(i);
-                else
-                    neighborDict[cell] = GetNeighborsNoWrapping(i);
+                neighborDict[cell] = GetNeighbors(i);
             }
         }
 
-        private List<Cell> GetNeighborsNoWrapping(int index)
+        private List<Cell> GetNeighbors(int index)
         {
             var neighborList = new List<Cell>();
 
@@ -128,88 +142,8 @@ namespace Conway
             }
 
             return neighborList;
-        }
+        }   
         
-        private List<Cell> GetNeighborsWrapping(int index)
-        {
-            List<Cell> neighborList = new List<Cell>();
-
-            int row = index / Columns;
-            int col = index % Columns;
-
-            bool bottomEdge = (row >= Rows - 1);
-            bool rightEdge = (col >= Columns - 1);
-            bool topEdge = (row <= 0);
-            bool leftEdge = (col <= 0);
-
-            if (bottomEdge == false)
-            {
-                neighborList.Add(cellBoard[RowColToIndex(row + 1, col)]);
-                if (rightEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(row + 1, col + 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(row + 1, 0)]);
-
-                if (leftEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(row + 1, col - 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(row + 1, Columns - 1)]);
-            }
-            else
-            {
-                neighborList.Add(cellBoard[RowColToIndex(0, col)]);
-                if (rightEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(0, col + 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(0, 0)]);
-
-                if (leftEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(0, col - 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(0, Columns - 1)]);
-            }
-
-
-            if (topEdge == false)
-            {
-                neighborList.Add(cellBoard[RowColToIndex(row - 1, col)]);
-                if (leftEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(row - 1, col - 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(row - 1, Columns - 1)]);
-
-                if (rightEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(row - 1, col + 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(row - 1, 0)]);
-            }
-            else
-            {
-                neighborList.Add(cellBoard[RowColToIndex(Rows - 1, col)]);
-                if (leftEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(Rows - 1, col - 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(Rows - 1, Columns - 1)]);
-
-                if (rightEdge == false)
-                    neighborList.Add(cellBoard[RowColToIndex(Rows - 1, col + 1)]);
-                else
-                    neighborList.Add(cellBoard[RowColToIndex(Rows - 1, 0)]);
-            }
-
-            if (rightEdge == false)
-                neighborList.Add(cellBoard[RowColToIndex(row, col + 1)]);
-            else
-                neighborList.Add(cellBoard[RowColToIndex(row, 0)]);
-
-            if (leftEdge == false)
-                neighborList.Add(cellBoard[RowColToIndex(row, col - 1)]);
-            else
-                neighborList.Add(cellBoard[RowColToIndex(row, Columns - 1)]);
-
-            return neighborList;
-        }
-
         private int RowColToIndex(int row, int col)
         {
             return row * Columns + col;
