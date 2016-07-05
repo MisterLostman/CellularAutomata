@@ -65,8 +65,7 @@ namespace Conway
 
         private void ClearClick(object sender, RoutedEventArgs e)
         {
-            foreach (Cell cell in board.cellBoard)
-                cell.IsAlive = false;
+            board.Clear();
         }
 
         private void BorderToggle(object sender, RoutedEventArgs e)
@@ -83,8 +82,8 @@ namespace Conway
         private void RunSimulation(object source, RoutedEventArgs e)
         {
             timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 1);
-            timer.Tick += Update;
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            timer.Tick += UpdateSimulation;
             timer.Start();
         }
 
@@ -93,7 +92,7 @@ namespace Conway
             timer.Stop();
         }
 
-        private void Update(object sender, EventArgs e)
+        private void UpdateSimulation(object sender, EventArgs e)
         {
             board.Update();
         }

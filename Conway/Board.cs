@@ -11,11 +11,15 @@ namespace Conway
 {
     public class Board : INotifyPropertyChanged
     {
+        #region INotifyPropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string name = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }        
+        }
+
+        #endregion
 
         public ObservableCollection<Cell> cellBoard { get; set; }        
         public Dictionary<Cell, List<Cell>> neighborDict;
@@ -60,7 +64,17 @@ namespace Conway
                 cellBoard.Add(new Cell(false));
             }
             InitializeNeighborDictionary();
-        }      
+        }
+
+        public void Clear()
+        {
+            foreach (Cell cell in cellBoard)
+            {
+                cell.IsAlive = false;
+            }
+        }
+
+        #region UpdateBoard
 
         public void Update()
         {            
@@ -88,14 +102,9 @@ namespace Conway
                         cell.IsAlive = true;
                 }
             }            
-        }
+        }               
 
-        public void Update(object source, System.Timers.ElapsedEventArgs e)
-        {
-            this.Update();
-        }
-
-        public byte AliveCount(Cell cell)
+        private byte AliveCount(Cell cell)
         {
             byte aliveCount = 0;
             foreach (Cell neighbor in neighborDict[cell])
@@ -105,7 +114,9 @@ namespace Conway
             }
 
             return aliveCount;
-        }        
+        }
+
+        #endregion
 
         #region DictionaryInitialization
 
