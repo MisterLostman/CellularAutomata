@@ -22,13 +22,14 @@ namespace Conway
     /// </summary>
     public partial class MainWindow : Window
     {
-        Board board;
-        System.Windows.Threading.DispatcherTimer timer;
+        Board board;        
 
         public MainWindow()
         {
             InitializeComponent();
-            board = new Board();                             
+            board = new Board();
+            this.DataContext = board;
+            conwayGrid.ItemsSource = board.cellBoard;                       
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
@@ -50,23 +51,7 @@ namespace Conway
         {
             board.CreateNewBoard(50,50);
             conwayGrid.ItemsSource = board.cellBoard;       
-        }
-
-        private void NeighborFlip(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            Cell cell = (Cell)button.DataContext;
-
-            foreach (Cell neighbor in board.neighborDict[cell])
-            {
-                neighbor.Flip();
-            }
-        }
-
-        private void ClearClick(object sender, RoutedEventArgs e)
-        {
-            board.Clear();
-        }
+        }                  
 
         private void BorderToggle(object sender, RoutedEventArgs e)
         {
@@ -77,24 +62,8 @@ namespace Conway
                 config.BorderOpacity = 1;
 
             Debug.WriteLine(config.BorderOpacity);
-        }
+        }       
 
-        private void RunSimulation(object source, RoutedEventArgs e)
-        {
-            timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
-            timer.Tick += UpdateSimulation;
-            timer.Start();
-        }
-
-        private void StopSimulation(object source, RoutedEventArgs e)
-        {
-            timer.Stop();
-        }
-
-        private void UpdateSimulation(object sender, EventArgs e)
-        {
-            board.Update();
-        }
+        
     }
 }

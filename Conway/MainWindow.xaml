@@ -40,8 +40,7 @@
         <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" 
                       DataContext="board" Height="600" VerticalAlignment="Top">
             <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <!--have to rebind rows/columns-->
+                <ItemsPanelTemplate>                    
                     <UniformGrid Rows="{Binding Rows}" Columns="{Binding Columns}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>            
@@ -49,10 +48,10 @@
 
         <StackPanel x:Name="configPanel" Grid.Row="1" Orientation="Horizontal">
             <Button Click="CreateBoard">Create Board</Button>
-            <Button Click="UpdateClick">Update</Button>
-            <Button Click="RunSimulation">Run</Button>
-            <Button Click="StopSimulation">Stop</Button>
-            <Button Click="ClearClick">Clear</Button>
+            <Button Command="{Binding UpdateCommand}">Update</Button>
+            <Button Command="{Binding StartCommand}">Run</Button>
+            <Button Command="{Binding StopCommand}">Stop</Button>
+            <Button Command="{Binding ClearCommand}">Clear</Button>
             <Button Click="BorderToggle">Show/Hide Borders</Button>
         </StackPanel>
     </Grid>

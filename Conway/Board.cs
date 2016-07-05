@@ -9,6 +9,13 @@ using System.Threading.Tasks;
 
 namespace Conway
 {
+    public enum BoardState
+    {
+        Running,
+        Stopped,
+        Empty
+    }
+
     public class Board : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged
@@ -21,8 +28,38 @@ namespace Conway
 
         #endregion
 
+        private BoardState state = BoardState.Stopped;
+
         public ObservableCollection<Cell> cellBoard { get; set; }        
-        public Dictionary<Cell, List<Cell>> neighborDict;
+        private Dictionary<Cell, List<Cell>> neighborDict;
+
+        #region Commands
+
+        private readonly RelayCommand startCommand;
+        public RelayCommand StartCommand { get { return startCommand; } }
+
+        private readonly RelayCommand updateCommand;
+        public RelayCommand UpdateCommand { get { return updateCommand; } }
+
+        private readonly RelayCommand clearCommand;
+        public RelayCommand ClearCommand { get { return clearCommand; } }
+
+        private RelayCommand stopCommand;
+        public RelayCommand StopCommand
+        {
+            get
+            {
+                if (stopCommand == null)
+                    stopCommand = new RelayCommand(param => this.StopSimulation(), param => state != BoardState.Stopped);
+                return stopCommand;
+            }
+        }
+
+        #endregion
+
+        System.Windows.Threading.DispatcherTimer timer;
+
+        #region Properties
 
         private int rows = 50;
         public int Rows
@@ -45,8 +82,17 @@ namespace Conway
                 OnPropertyChanged();
             }
         }
-          
-        
+
+        #endregion
+
+        public Board()
+        {
+            CreateNewBoard();
+            startCommand = new RelayCommand(param => this.RunSimulation());
+            updateCommand = new RelayCommand(param => this.Update());
+            clearCommand = new RelayCommand(param => this.Clear());
+        }
+
         public void CreateNewBoard()
         {
             CreateNewBoard(Rows, Columns);
@@ -72,6 +118,21 @@ namespace Conway
             {
                 cell.IsAlive = false;
             }
+        }
+
+        private void RunSimulation()
+        {
+            timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            timer.Tick += Update;
+            timer.Start();
+            state = BoardState.Running;
+        }
+
+        private void StopSimulation()
+        {
+            timer.Stop();
+            state = BoardState.Stopped;
         }
 
         #region UpdateBoard
@@ -103,6 +164,11 @@ namespace Conway
                 }
             }            
         }               
+
+        public void Update(object sender, EventArgs e)
+        {
+            Update();
+        }
 
         private byte AliveCount(Cell cell)
         {
