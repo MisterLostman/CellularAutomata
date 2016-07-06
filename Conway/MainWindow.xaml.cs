@@ -40,19 +40,8 @@ namespace Conway
 
             cell.Flip();
             //Debug.WriteLine(board.AliveCount(cell));
-        }
+        }             
         
-        private void UpdateClick(object sender, RoutedEventArgs e)
-        {
-            board.Update();
-        }
-
-        private void CreateBoard(object sender, RoutedEventArgs e)
-        {
-            board.CreateNewBoard(50,50);
-            conwayGrid.ItemsSource = board.cellBoard;       
-        }                  
-
         private void BorderToggle(object sender, RoutedEventArgs e)
         {
             var config = (Configuration)mainWindow.FindResource("config");
@@ -62,8 +51,6 @@ namespace Conway
                 config.BorderOpacity = 1;
 
             Debug.WriteLine(config.BorderOpacity);
-        }       
-
-        
+        }                    
     }
 }

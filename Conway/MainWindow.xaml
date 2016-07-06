@@ -12,7 +12,7 @@
 
     <Window.Resources>
         <local:Configuration x:Key="config" />
-    </Window.Resources>
+    </Window.Resources>   
     
     <Grid>
         <Grid.Resources>            
@@ -38,7 +38,7 @@
         </Grid.RowDefinitions>
 
         <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" 
-                      DataContext="board" Height="600" VerticalAlignment="Top">
+                      Height="600" VerticalAlignment="Top">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>                    
                     <UniformGrid Rows="{Binding Rows}" Columns="{Binding Columns}"/>
@@ -46,8 +46,8 @@
             </ItemsControl.ItemsPanel>            
         </ItemsControl>
 
-        <StackPanel x:Name="configPanel" Grid.Row="1" Orientation="Horizontal">
-            <Button Click="CreateBoard">Create Board</Button>
+        <StackPanel x:Name="configPanel" Grid.Row="1" Orientation="Horizontal">            
+            <Button Command="{Binding NewCommand}">Create Board</Button>
             <Button Command="{Binding UpdateCommand}">Update</Button>
             <Button Command="{Binding StartCommand}">Run</Button>
             <Button Command="{Binding StopCommand}">Stop</Button>

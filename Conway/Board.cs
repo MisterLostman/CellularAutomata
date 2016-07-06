@@ -35,6 +35,9 @@ namespace Conway
 
         #region Commands
 
+        private readonly RelayCommand newCommand;
+        public RelayCommand NewCommand { get { return newCommand; } }
+
         private readonly RelayCommand startCommand;
         public RelayCommand StartCommand { get { return startCommand; } }
 
@@ -42,7 +45,7 @@ namespace Conway
         public RelayCommand UpdateCommand { get { return updateCommand; } }
 
         private readonly RelayCommand clearCommand;
-        public RelayCommand ClearCommand { get { return clearCommand; } }
+        public RelayCommand ClearCommand { get { return clearCommand; } }        
 
         private RelayCommand stopCommand;
         public RelayCommand StopCommand
@@ -53,8 +56,8 @@ namespace Conway
                     stopCommand = new RelayCommand(param => this.StopSimulation(), param => state != BoardState.Stopped);
                 return stopCommand;
             }
-        }
-
+        }        
+       
         #endregion
 
         System.Windows.Threading.DispatcherTimer timer;
@@ -87,10 +90,12 @@ namespace Conway
 
         public Board()
         {
+            cellBoard = new ObservableCollection<Cell>();
             CreateNewBoard();
             startCommand = new RelayCommand(param => this.RunSimulation());
             updateCommand = new RelayCommand(param => this.Update());
             clearCommand = new RelayCommand(param => this.Clear());
+            newCommand = new RelayCommand(param => this.CreateNewBoard());
         }
 
         public void CreateNewBoard()
@@ -103,7 +108,7 @@ namespace Conway
             Rows = _rows;
             Columns = _columns;
 
-            cellBoard = new ObservableCollection<Cell>();
+            cellBoard.Clear();
 
             for (int i = 0; i < Rows * Columns; i++)
             {
@@ -134,7 +139,7 @@ namespace Conway
             timer.Stop();
             state = BoardState.Stopped;
         }
-
+        
         #region UpdateBoard
 
         public void Update()
