@@ -35,8 +35,7 @@ namespace Conway
         private void OnClick(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            Cell cell = (Cell)button.DataContext;
-            
+            Cell cell = (Cell)button.DataContext;            
 
             cell.Flip();
             //Debug.WriteLine(board.AliveCount(cell));

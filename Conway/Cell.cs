@@ -6,11 +6,23 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Conway
 {
     public class Cell : DependencyObject
-    {        
+    {
+        private RelayCommand flipCommand;
+        public RelayCommand FlipCommand
+        {
+            get { return flipCommand; }
+            set
+            {
+                if (flipCommand == null)
+                    flipCommand = new RelayCommand(param => Flip());
+            }
+        }
+
         public bool IsAlive
         {
             get { return (bool)GetValue(IsAliveProperty); }
@@ -34,6 +46,8 @@ namespace Conway
                 IsAlive = false;
             else
                 IsAlive = true;
+
+            Debug.WriteLine("Flip");
         }  
                
     }

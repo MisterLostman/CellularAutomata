@@ -37,8 +37,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" 
-                      Height="600" VerticalAlignment="Top">
+        <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" VerticalAlignment="Top"
+                      Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>                    
                     <UniformGrid Rows="{Binding Rows}" Columns="{Binding Columns}"/>
@@ -53,6 +53,8 @@
             <Button Command="{Binding StopCommand}">Stop</Button>
             <Button Command="{Binding ClearCommand}">Clear</Button>
             <Button Click="BorderToggle">Show/Hide Borders</Button>
+            <Button Command="{Binding ResizeCommand}" CommandParameter="{Binding ElementName=dimensionTextBox, Path=Text}">Change grid dimensions</Button>
+            <TextBox x:Name="dimensionTextBox" Width="100"></TextBox>
         </StackPanel>
     </Grid>
 </Window>

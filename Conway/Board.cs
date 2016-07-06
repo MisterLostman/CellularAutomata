@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+
 
 namespace Conway
 {
@@ -13,7 +15,7 @@ namespace Conway
     {
         Running,
         Stopped,
-        Empty
+        Dead
     }
 
     public class Board : INotifyPropertyChanged
@@ -28,23 +30,30 @@ namespace Conway
 
         #endregion
 
-        private BoardState state = BoardState.Stopped;
+        #region Fields
 
-        public ObservableCollection<Cell> cellBoard { get; set; }        
+        private BoardState state = BoardState.Stopped;
+        private System.Windows.Threading.DispatcherTimer timer;
+        private Ruleset rules;
         private Dictionary<Cell, List<Cell>> neighborDict;
 
-        #region Commands
+        #endregion
 
-        private readonly RelayCommand newCommand;
+        #region Commands and Command Delegates        
+
+        private RelayCommand resizeCommand;
+        public RelayCommand ResizeCommand { get { return resizeCommand; } }
+
+        private RelayCommand newCommand;
         public RelayCommand NewCommand { get { return newCommand; } }
 
-        private readonly RelayCommand startCommand;
+        private RelayCommand startCommand;
         public RelayCommand StartCommand { get { return startCommand; } }
 
-        private readonly RelayCommand updateCommand;
+        private RelayCommand updateCommand;
         public RelayCommand UpdateCommand { get { return updateCommand; } }
 
-        private readonly RelayCommand clearCommand;
+        private RelayCommand clearCommand;
         public RelayCommand ClearCommand { get { return clearCommand; } }        
 
         private RelayCommand stopCommand;
@@ -56,15 +65,55 @@ namespace Conway
                     stopCommand = new RelayCommand(param => this.StopSimulation(), param => state != BoardState.Stopped);
                 return stopCommand;
             }
-        }        
-       
-        #endregion
+        }
 
-        System.Windows.Threading.DispatcherTimer timer;
+        private void InitializeCommands()
+        {
+            startCommand = new RelayCommand(param => this.RunSimulation());
+            updateCommand = new RelayCommand(param => this.UpdateSimulation());
+            clearCommand = new RelayCommand(param => this.ClearSimulation());
+            newCommand = new RelayCommand(param => this.CreateNewBoard());
+            resizeCommand = new RelayCommand(this.CreateNewBoard, p => state != BoardState.Running);
+        }
+
+        private void ClearSimulation()
+        {
+            foreach (Cell cell in cellBoard)
+            {
+                cell.IsAlive = false;
+            }
+
+            state = BoardState.Dead;
+        }
+
+        private void RunSimulation()
+        {
+            timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            timer.Tick += UpdateSimulation;
+            timer.Start();
+            state = BoardState.Running;
+        }
+
+        private void StopSimulation()
+        {
+            timer.Stop();
+            state = BoardState.Stopped;
+        }
+
+        private void CreateNewBoard(object dimension)
+        {
+            int size = Convert.ToInt32(dimension);
+            CreateNewBoard(size, size);           
+        }
+
+        #endregion
 
         #region Properties
 
-        private int rows = 50;
+        public ObservableCollection<Cell> cellBoard { get; set; }
+
+        private int rows = 100;
         public int Rows
         {
             get { return rows; }
@@ -75,7 +124,7 @@ namespace Conway
             }
         }
             
-        private int columns = 50;
+        private int columns = 100;
         public int Columns
         {
             get { return columns; }
@@ -88,22 +137,22 @@ namespace Conway
 
         #endregion
 
+        #region Constructor/helpers
+
         public Board()
         {
             cellBoard = new ObservableCollection<Cell>();
+            rules = new Ruleset(new List<int> { 3 }, new List<int> { 1, 2, 3, 4, 5 });
             CreateNewBoard();
-            startCommand = new RelayCommand(param => this.RunSimulation());
-            updateCommand = new RelayCommand(param => this.Update());
-            clearCommand = new RelayCommand(param => this.Clear());
-            newCommand = new RelayCommand(param => this.CreateNewBoard());
+            InitializeCommands();            
         }
 
-        public void CreateNewBoard()
+        private void CreateNewBoard()
         {
             CreateNewBoard(Rows, Columns);
         }
           
-        public void CreateNewBoard(int _rows, int _columns)
+        private void CreateNewBoard(int _rows, int _columns)
         {
             Rows = _rows;
             Columns = _columns;
@@ -117,32 +166,11 @@ namespace Conway
             InitializeNeighborDictionary();
         }
 
-        public void Clear()
-        {
-            foreach (Cell cell in cellBoard)
-            {
-                cell.IsAlive = false;
-            }
-        }
+        #endregion
 
-        private void RunSimulation()
-        {
-            timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
-            timer.Tick += Update;
-            timer.Start();
-            state = BoardState.Running;
-        }
-
-        private void StopSimulation()
-        {
-            timer.Stop();
-            state = BoardState.Stopped;
-        }
-        
         #region UpdateBoard
 
-        public void Update()
+        private void UpdateSimulation()
         {            
             for (int i = 0; i < Rows*Columns; i++)
             {
@@ -153,26 +181,19 @@ namespace Conway
             for (int i = 0; i < Rows * Columns; i++)
             {
                 Cell cell = cellBoard[i];
-                if (cell.IsAlive == false)
-                {
-                    if (cell.AliveCount == 3)
-                        cell.IsAlive = true;
-                    else
-                        cell.IsAlive = false;
-                }
-                else
-                {
-                    if (cell.AliveCount > 3 || cell.AliveCount < 2)
-                        cell.IsAlive = false;
-                    else
-                        cell.IsAlive = true;
-                }
-            }            
+                
+                if (cell.IsAlive == false && rules.BirthRules.Contains(cell.AliveCount))
+                    cell.IsAlive = true;                
+                else if (cell.IsAlive == true && (!rules.SurviveRules.Contains(cell.AliveCount)))
+                    cell.IsAlive = false;
+            }
+
+            Debug.WriteLine(rules);
         }               
 
-        public void Update(object sender, EventArgs e)
+        private void UpdateSimulation(object sender, EventArgs e)
         {
-            Update();
+            UpdateSimulation();
         }
 
         private byte AliveCount(Cell cell)
