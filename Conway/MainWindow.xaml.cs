@@ -28,18 +28,8 @@ namespace Conway
         {
             InitializeComponent();
             board = new Board();
-            this.DataContext = board;
-            conwayGrid.ItemsSource = board.cellBoard;                       
-        }
-
-        private void OnClick(object sender, RoutedEventArgs e)
-        {
-            Button button = sender as Button;
-            Cell cell = (Cell)button.DataContext;            
-
-            cell.Flip();
-            //Debug.WriteLine(board.AliveCount(cell));
-        }             
+            this.DataContext = board;                                  
+        }        
         
         private void BorderToggle(object sender, RoutedEventArgs e)
         {

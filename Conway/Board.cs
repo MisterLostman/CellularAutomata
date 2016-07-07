@@ -35,11 +35,14 @@ namespace Conway
         private BoardState state = BoardState.Stopped;
         private System.Windows.Threading.DispatcherTimer timer;
         private Ruleset rules;
-        private Dictionary<Cell, List<Cell>> neighborDict;
+        private Dictionary<int, List<int>> neighborDict;
 
         #endregion
 
         #region Commands and Command Delegates        
+
+        private RelayCommand flipCommand;
+        public RelayCommand FlipCommand { get { return flipCommand; } }
 
         private RelayCommand resizeCommand;
         public RelayCommand ResizeCommand { get { return resizeCommand; } }
@@ -74,6 +77,7 @@ namespace Conway
             clearCommand = new RelayCommand(param => this.ClearSimulation());
             newCommand = new RelayCommand(param => this.CreateNewBoard());
             resizeCommand = new RelayCommand(this.CreateNewBoard, p => state != BoardState.Running);
+            flipCommand = new RelayCommand(this.Flip);
         }
 
         private void ClearSimulation()
@@ -107,13 +111,25 @@ namespace Conway
             CreateNewBoard(size, size);           
         }
 
+        private void Flip(object parameter)
+        {
+            Cell cell = parameter as Cell;
+
+            if (cell.IsAlive == true)
+                cell.IsAlive = false;
+            else
+                cell.IsAlive = true;
+
+            Debug.WriteLine("FLIP!");
+        }
+
         #endregion
 
         #region Properties
 
         public ObservableCollection<Cell> cellBoard { get; set; }
 
-        private int rows = 100;
+        private int rows = 20;
         public int Rows
         {
             get { return rows; }
@@ -124,7 +140,7 @@ namespace Conway
             }
         }
             
-        private int columns = 100;
+        private int columns = 20;
         public int Columns
         {
             get { return columns; }
@@ -173,9 +189,8 @@ namespace Conway
         private void UpdateSimulation()
         {            
             for (int i = 0; i < Rows*Columns; i++)
-            {
-                Cell cell = cellBoard[i];
-                cell.AliveCount = AliveCount(cell);
+            {                
+                cellBoard[i].AliveCount = AliveCount(i);
             }
 
             for (int i = 0; i < Rows * Columns; i++)
@@ -196,12 +211,12 @@ namespace Conway
             UpdateSimulation();
         }
 
-        private byte AliveCount(Cell cell)
+        private byte AliveCount(int index)
         {
             byte aliveCount = 0;
-            foreach (Cell neighbor in neighborDict[cell])
+            foreach (int neighbor in neighborDict[index])
             {
-                if (neighbor.IsAlive == true)
+                if (cellBoard[neighbor].IsAlive == true)
                     aliveCount++;
             }
 
@@ -214,17 +229,16 @@ namespace Conway
 
         private void InitializeNeighborDictionary()
         {
-            neighborDict = new Dictionary<Cell, List<Cell>>();
+            neighborDict = new Dictionary<int, List<int>>();
             for (int i = 0; i < Rows*Columns; i++)
-            {
-                Cell cell = cellBoard[i];
-                neighborDict[cell] = GetNeighbors(i);
+            {                
+                neighborDict[i] = GetNeighbors(i);
             }
         }
 
-        private List<Cell> GetNeighbors(int index)
+        private List<int> GetNeighbors(int index)
         {
-            var neighborList = new List<Cell>();
+            var neighborList = new List<int>();
 
             int row = index / Columns;
             int col = index % Columns;
@@ -239,7 +253,7 @@ namespace Conway
                         int adjCol = col + colDisp;
 
                         if (adjRow >= 0 && adjRow < Rows && adjCol >= 0 && adjCol < Columns)
-                            neighborList.Add(cellBoard[RowColToIndex(adjRow, adjCol)]);
+                            neighborList.Add(RowColToIndex(adjRow, adjCol));
                     }
                 }
             }

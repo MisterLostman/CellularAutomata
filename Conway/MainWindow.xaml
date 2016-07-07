@@ -21,7 +21,9 @@
                     <Border.BorderBrush>
                         <SolidColorBrush Color="#FF596366" Opacity="{Binding Source={StaticResource config}, Path=BorderOpacity}"/>
                     </Border.BorderBrush>
-                    <Button x:Name="aliveToggle" Background="Black" Opacity="0" Click="OnClick" />
+                    <Button x:Name="aliveToggle" Background="Black" Opacity="0" 
+                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}, Path=DataContext.FlipCommand}"
+                            CommandParameter="{Binding}"/>
                 </Border>
 
                 <DataTemplate.Triggers>
@@ -37,8 +39,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" VerticalAlignment="Top"
-                      Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
+        <ItemsControl x:Name="conwayGrid" ItemTemplate="{StaticResource cellTemplate}" ItemsSource="{Binding cellBoard}" 
+                      VerticalAlignment="Top" Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>                    
                     <UniformGrid Rows="{Binding Rows}" Columns="{Binding Columns}"/>
